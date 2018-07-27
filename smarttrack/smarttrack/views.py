@@ -15,8 +15,7 @@ if os.environ.get('CAMERA'):
 else:
     from smarttrack.camera import Camera
 
-
-@app.route('/')
+#@app.route('/')
 @app.route('/home')
 def home():
     """Renders the home page."""
@@ -46,6 +45,10 @@ def about():
         message='Your application description page.'
     )
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html',
+                           title='404'), 404
 
 def gen(camera):
     """Video streaming generator function."""
@@ -60,3 +63,15 @@ def video_feed():
     """Video streaming route. Put this in the src attribute of an img tag."""
     return Response(gen(Camera()),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
+
+from flask import make_response
+
+@app.route('/')
+def index():
+    response = make_response('<h1> This is a document carries a cookie</h1>')
+    response.set_cookie('answer', '42')
+    return response
+
+@app.route('/user/<name>')
+def user(name):
+    return render_template('user.html', name=name)
